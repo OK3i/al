@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Приглашение на домашнее свидание ✨</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pinkAccent: '#FF6B9B',
+                        purpleDark: '#0F0C1B',
+                        cardBg: 'rgba(25, 20, 42, 0.8)',
+                        glowPink: '#FF3385'
+                    },
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background: radial-gradient(circle at center, #231138 0%, #0a0612 100%);
+            min-height: 100vh;
+            color: #ffffff;
+            overflow-x: hidden;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Floating background particles */
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            animation: floatUp 7s infinite linear;
+            opacity: 0.8;
+            will-change: transform;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(105vh) scale(0.6) rotate(0deg);
+                opacity: 0;
+            }
+            15% { opacity: 0.9; }
+            85% { opacity: 0.9; }
+            100% {
+                transform: translateY(-10vh) scale(1.1) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .glow-text {
+            text-shadow: 0 0 16px rgba(255, 107, 155, 0.7), 0 0 32px rgba(255, 107, 155, 0.3);
+        }
+
+        .glass-card {
+            background: rgba(28, 20, 48, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 107, 155, 0.25);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 107, 155, 0.15);
+        }
+
+        /* Responsive dodge button style */
+        #noBtn {
+            transition: transform 0.18s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            touch-action: none;
+        }
+
+        .pulse-pink {
+            animation: pulseGlow 1.8s infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 12px rgba(255, 107, 155, 0.5); }
+            100% { box-shadow: 0 0 28px rgba(255, 107, 155, 0.9), 0 0 12px rgba(255, 255, 255, 0.6); }
+        }
+
+        .anime-card {
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+        }
+
+        .anime-card.selected {
+            border-color: #FF6B9B;
+            background: rgba(255, 107, 155, 0.2);
+            box-shadow: 0 0 15px rgba(255, 107, 155, 0.5);
+        }
+    </style>
+</head>
+<body class="font-sans flex flex-col items-center justify-center p-3 sm:p-5 relative min-h-screen selection:bg-pinkAccent selection:text-white">
+
+    <!-- Particles Container -->
+    <div id="particles-container" class="fixed inset-0 overflow-hidden pointer-events-none z-0"></div>
+
+    <!-- Main Mobile Layout -->
+    <main class="relative z-10 w-full max-w-sm sm:max-w-md mx-auto text-center my-auto py-4">
+
+        <!-- Top Header Card -->
+        <div class="glass-card rounded-3xl p-5 sm:p-7 mb-5 border border-pink-500/30">
+            <div class="inline-block px-3.5 py-1 rounded-full bg-pink-500/15 border border-pink-500/40 text-pink-300 text-xs font-semibold mb-3 tracking-wide">
+                Официальное приглашение 💌
+            </div>
+            
+            <h1 class="text-2xl sm:text-3xl font-extrabold mb-3 text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-pink-400 to-purple-200 glow-text leading-tight">
+                Домашнее Свидание: $0 budget ✨
+            </h1>
+
+            <div class="text-gray-200 text-xs sm:text-sm leading-relaxed space-y-2.5 font-normal">
+                <p class="bg-pink-950/40 p-3 rounded-2xl border border-pink-500/20 italic">
+                    «Форс-мажор с финансами — не повод отменять встречи! Свидание переносится в уютную обстановку общаги под плед» ☕️✨
+                </p>
+                <p class="pt-1">
+                    Тактильный голод сам себя не утолит! С меня чай, вкусняшки и уют, с тебя — выбор аниме и времени 💖
+                </p>
+            </div>
+        </div>
+
+        <!-- Interactive Question Card -->
+        <div id="questionCard" class="glass-card rounded-3xl p-5 sm:p-7 mb-4 relative overflow-hidden">
+            <h2 class="text-lg sm:text-xl font-bold mb-4 text-pink-200">
+                Ты прийдёшь ко мне? 👉👈
+            </h2>
+
+            <!-- Mobile-Optimized Buttons Container -->
+            <div class="flex flex-col items-center justify-center gap-3.5 min-h-[130px] relative w-full" id="buttonArea">
+                <!-- YES BUTTON -->
+                <button id="yesBtn" onclick="goToStep2()" class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold text-base shadow-lg pulse-pink transform active:scale-95 transition-all duration-200 z-20">
+                    Да, заходи за мной! 💕
+                </button>
+
+                <!-- NO BUTTON (Dodges touch/hover) -->
+                <button id="noBtn" class="w-full py-3 px-5 rounded-2xl bg-slate-800/80 text-gray-300 font-semibold text-sm border border-slate-600/50 z-10 select-none">
+                    Фи, хочу в ресторан 😤
+                </button>
+            </div>
+            
+            <p id="hintText" class="text-[11px] text-pink-300/70 mt-3 opacity-0 transition-opacity duration-300">
+                (Подсказка: кнопка «Ресторан» сломалась и уворачивается!)
+            </p>
+        </div>
+
+        <!-- STEP 2: ANIME & DATE SELECTION (Hidden initially) -->
+        <div id="step2Card" class="hidden glass-card rounded-3xl p-5 sm:p-7 mb-4 text-left">
+            <h2 class="text-lg sm:text-xl font-bold mb-1 text-center text-pink-300">Конфигуратор вечера 🎬</h2>
+            <p class="text-xs text-gray-300 text-center mb-5">Выбери, что мы будем смотреть и когда:</p>
+
+            <!-- Anime Choice -->
+            <div class="mb-5">
+                <label class="block text-xs font-semibold text-pink-200 uppercase tracking-wider mb-2">1. Выбери аниме:</label>
+                <div class="grid grid-cols-1 gap-2.5">
+                    <div id="anime1" onclick="selectAnime('5 сантиметров в секунду', 'anime1')" class="anime-card p-3 rounded-2xl border border-pink-500/30 bg-purple-950/40 flex items-center gap-3">
+                        <span class="text-2xl">🌸</span>
+                        <div>
+                            <div class="text-sm font-bold text-white">5 сантиметров в секунду</div>
+                            <div class="text-[11px] text-gray-300">Романтика, нежность, эстетика Синкая</div>
+                        </div>
+                    </div>
+
+                    <div id="anime2" onclick="selectAnime('Дитя погоды', 'anime2')" class="anime-card p-3 rounded-2xl border border-pink-500/30 bg-purple-950/40 flex items-center gap-3">
+                        <span class="text-2xl">🌧️</span>
+                        <div>
+                            <div class="text-sm font-bold text-white">Дитя погоды</div>
+                            <div class="text-[11px] text-gray-300">Дождь, атмосфера Токио, любовь</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Date & Time Picker -->
+            <div class="mb-6">
+                <label class="block text-xs font-semibold text-pink-200 uppercase tracking-wider mb-2">2. Выбери дату и время:</label>
+                <div class="flex flex-col gap-2">
+                    <input type="datetime-local" id="dateTimeInput" class="w-full bg-purple-950/60 border border-pink-500/40 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-pink-400">
+                </div>
+            </div>
+
+            <button onclick="handleConfirm()" class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold text-base shadow-lg pulse-pink transform active:scale-95 transition-all duration-200">
+                Подтвердить выбор ✨
+            </button>
+        </div>
+
+        <!-- SUCCESS SECTION & TELEGRAM SEND -->
+        <div id="successSection" class="hidden glass-card rounded-3xl p-5 sm:p-7 border-2 border-pink-500/60 shadow-2xl animate-fade-in">
+            <div class="text-4xl sm:text-5xl mb-3">🎉💖✨</div>
+            <h2 class="text-xl sm:text-2xl font-extrabold text-pink-300 mb-2">
+                Всё готово! 🥳
+            </h2>
+            <p class="text-gray-200 text-xs sm:text-sm mb-4 leading-relaxed">
+                Отправь мне подтверждение в один клик, чтобы я забронировал это время!
+            </p>
+
+            <div class="bg-pink-950/40 p-3.5 rounded-2xl border border-pink-500/30 text-xs text-pink-200 mb-5 space-y-1">
+                <div>🎬 <b>Аниме:</b> <span id="summaryAnime">-</span></div>
+                <div>📅 <b>Дата и время:</b> <span id="summaryDate">-</span></div>
+                <div>🥰 <b>В программе:</b> Чай, обнимашки и ноль недовольных субтитров</div>
+            </div>
+
+            <!-- TELEGRAM SHARE BUTTON -->
+            <a id="tgSendBtn" href="#" target="_blank" class="block w-full py-3.5 px-6 rounded-2xl bg-sky-500 hover:bg-sky-400 text-white font-bold text-base shadow-lg transform active:scale-95 transition-all duration-200">
+                💬 Отправить ответ в Telegram
+            </a>
+        </div>
+
+    </main>
+
+    <script>
+        // Floating particles
+        const particleIcons = ['✨', '💖', '🌸', '⭐', '💕', '💫'];
+        const particlesContainer = document.getElementById('particles-container');
+
+        for (let i = 0; i < 22; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.innerText = particleIcons[Math.floor(Math.random() * particleIcons.length)];
+            particle.style.left = Math.random() * 100 + 'vw';
+            particle.style.animationDuration = (Math.random() * 4 + 4) + 's';
+            particle.style.animationDelay = (Math.random() * 4) + 's';
+            particle.style.fontSize = (Math.random() * 12 + 14) + 'px';
+            particlesContainer.appendChild(particle);
+        }
+
+        // Set default datetime to today/tomorrow
+        const now = new Date();
+        now.setHours(now.getHours() + 2);
+        now.setMinutes(0);
+        document.getElementById('dateTimeInput').value = now.toISOString().slice(0, 16);
+
+        // Dodge Button Logic
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        const hintText = document.getElementById('hintText');
+
+        const noMessages = [
+            "Ресторан закрыт! 🙈",
+            "Кнопка выше лучше! 👆",
+            "Пожалуйста-пожалуйста! 🥺",
+            "В общаге же уютнее! ☕️",
+            "Подумай ещё раз! ✨",
+            "Ну Звёздочка! 🌸",
+            "Без вариантов! 😜"
+        ];
+
+        let clickAttempt = 0;
+
+        function dodgeButton(e) {
+            if (e) e.preventDefault();
+            clickAttempt++;
+            
+            hintText.classList.remove('opacity-0');
+            noBtn.innerText = noMessages[Math.floor(Math.random() * noMessages.length)];
+
+            const currentScale = 1 + (clickAttempt * 0.06);
+            if (currentScale <= 1.35) {
+                yesBtn.style.transform = `scale(${currentScale})`;
+            }
+
+            const maxOffset = Math.min(window.innerWidth * 0.3, 110);
+            const randomX = (Math.random() - 0.5) * maxOffset * 2;
+            const randomY = (Math.random() - 0.5) * 80;
+
+            noBtn.style.transform = `translate(${randomX}px, ${randomY}px)`;
+        }
+
+        ['touchstart', 'pointerdown', 'mouseover'].forEach(eventType => {
+            noBtn.addEventListener(eventType, dodgeButton, { passive: false });
+        });
+
+        // Step 2 Transition
+        function goToStep2() {
+            document.getElementById('questionCard').classList.add('hidden');
+            document.getElementById('step2Card').classList.remove('hidden');
+        }
+
+        // Selection handling
+        let selectedAnimeTitle = '5 сантиметров в секунду'; // Default
+        selectAnime('5 сантиметров в секунду', 'anime1');
+
+        function selectAnime(title, elementId) {
+            selectedAnimeTitle = title;
+            document.querySelectorAll('.anime-card').forEach(card => card.classList.remove('selected'));
+            document.getElementById(elementId).classList.add('selected');
+        }
+
+        // Final Confirm & TG Notification Setup
+        function handleForgive() {}
+
+        function handleConfirm() {
+            const rawDateTime = document.getElementById('dateTimeInput').value;
+            const formattedDate = rawDateTime ? new Date(rawDateTime).toLocaleString('ru-RU', {
+                day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit'
+            }) : 'Скоро';
+
+            document.getElementById('summaryAnime').innerText = selectedAnimeTitle;
+            document.getElementById('summaryDate').innerText = formattedDate;
+
+            // Generate Telegram Share Link
+            const messageText = `Я согласна на домашнее свидание! 🥰\n\n🎬 Выбранное аниме: ${selectedAnimeTitle}\n📅 Дата и время: ${formattedDate}\n\nТактильный голод официально отменяется, жду тебя! ✨`;
+            
+            // Telegram share link opens Telegram and pre-fills the message to send to you
+            const tgUrl = `https://t.me/share/url?url=&text=${encodeURIComponent(messageText)}`;
+            document.getElementById('tgSendBtn').href = tgUrl;
+
+            // Confetti
+            confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+
+            document.getElementById('step2Card').classList.add('hidden');
+            const successSection = document.getElementById('successSection');
+            successSection.classList.remove('hidden');
+            successSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    </script>
+</body>
+</html>
