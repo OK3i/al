@@ -310,8 +310,12 @@
             const messageText = `Я согласна на домашнее свидание! 🥰\n\n🎬 Выбранное аниме: ${selectedAnimeTitle}\n📅 Дата и время: ${formattedDate}\n\nТактильный голод официально отменяется, жду тебя! ✨`;
             
             // Telegram share link opens Telegram and pre-fills the message to send to you
-            const tgUrl = `https://t.me/share/url?url=&text=${encodeURIComponent(messageText)}`;
-            document.getElementById('tgSendBtn').href = tgUrl;
+            // Новый универсальный вариант (открывает диалог в ТГ)
+            const username = '@d_O_F_K_E_K'; // бойся указать БЕЗ знака @, например: alex_dev
+            const text = `Я согласна на домашнее свидание! 🥰\n🎬 Аниме: ${selectedAnime}\n📅 Дата: ${selectedDate}`;
+
+            const tgUrl = `https://t.me/${username}?text=${encodeURIComponent(text)}`;
+            window.open(tgUrl, '_blank');
 
             // Confetti
             confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
