@@ -199,7 +199,7 @@
                 Всё готово! 🥳
             </h2>
             <p class="text-gray-200 text-xs sm:text-sm mb-4 leading-relaxed">
-                Отправь мне подтверждение в один клик, чтобы я забронировал это время!
+                Открой Telegram и нажми «Отправить», чтобы подтвердить выбор.
             </p>
 
             <div class="bg-pink-950/40 p-3.5 rounded-2xl border border-pink-500/30 text-xs text-pink-200 mb-5 space-y-1">
@@ -209,8 +209,8 @@
             </div>
 
             <!-- TELEGRAM SHARE BUTTON -->
-            <a id="tgSendBtn" href="#" target="_blank" class="block w-full py-3.5 px-6 rounded-2xl bg-sky-500 hover:bg-sky-400 text-white font-bold text-base shadow-lg transform active:scale-95 transition-all duration-200">
-                💬 Отправить ответ в Telegram
+            <a id="tgSendBtn" href="#" target="_blank" rel="noopener noreferrer" class="block w-full py-3.5 px-6 rounded-2xl bg-sky-500 hover:bg-sky-400 text-white font-bold text-base shadow-lg transform active:scale-95 transition-all duration-200">
+                💬 Открыть Telegram и отправить
             </a>
         </div>
 
@@ -294,9 +294,7 @@
             document.getElementById(elementId).classList.add('selected');
         }
 
-        // Final Confirm & TG Notification Setup
-        function handleForgive() {}
-
+        // Final Confirm & Telegram message setup
         function handleConfirm() {
             const rawDateTime = document.getElementById('dateTimeInput').value;
             const formattedDate = rawDateTime ? new Date(rawDateTime).toLocaleString('ru-RU', {
@@ -306,16 +304,10 @@
             document.getElementById('summaryAnime').innerText = selectedAnimeTitle;
             document.getElementById('summaryDate').innerText = formattedDate;
 
-            // Generate Telegram Share Link
             const messageText = `Я согласна на домашнее свидание! 🥰\n\n🎬 Выбранное аниме: ${selectedAnimeTitle}\n📅 Дата и время: ${formattedDate}\n\nТактильный голод официально отменяется, жду тебя! ✨`;
-            
-            // Telegram share link opens Telegram and pre-fills the message to send to you
-            // Новый универсальный вариант (открывает диалог в ТГ)
-            const username = '@d_O_F_K_E_K'; // бойся указать БЕЗ знака @, например: alex_dev
-            const text = `Я согласна на домашнее свидание! 🥰\n🎬 Аниме: ${selectedAnime}\n📅 Дата: ${selectedDate}`;
-
-            const tgUrl = `https://t.me/${username}?text=${encodeURIComponent(text)}`;
-            window.open(tgUrl, '_blank');
+            const username = 'd_O_F_K_E_K';
+            document.getElementById('tgSendBtn').href =
+                `https://t.me/${username}?text=${encodeURIComponent(messageText)}`;
 
             // Confetti
             confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
